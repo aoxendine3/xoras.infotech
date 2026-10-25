@@ -2,6 +2,26 @@
 (function initXorasWikiAndAgents() {
   console.log("XORAS Sovereign Overlay: Hydrating Wiki, Receipts & Citizen Agent Console...");
 
+  // Global capture click listener for special buttons and links
+  document.addEventListener("click", function(e) {
+    const btn = e.target.closest("button");
+    if (btn && btn.textContent && btn.textContent.includes("Continue with Google")) {
+      e.preventDefault();
+      e.stopPropagation();
+      renderOAuthNoticeModal();
+      return;
+    }
+
+    const a = e.target.closest("a");
+    if (a && ((a.href && a.href.includes("xoras.systems@gmail.com")) || (a.textContent && a.textContent.toLowerCase().includes("contact the architect")))) {
+      e.preventDefault();
+      e.stopPropagation();
+      renderAboutModal();
+      return;
+    }
+  }, true);
+
+
   const AGENTS = [
     {
       id: "daxx",
@@ -562,6 +582,62 @@
     }
   }
 
+
+  // About & Enterprise Consultation Modal
+  function renderAboutModal() {
+    closeActiveModal();
+    const overlay = document.createElement("div");
+    overlay.className = "xoras-modal-overlay";
+    overlay.id = "xoras-active-modal";
+    overlay.innerHTML = 
+      '<div class="xoras-modal-content" style="max-width:850px;">' +
+        '<div class="xoras-modal-header">' +
+          '<div>' +
+            '<div style="font-size:11px; font-weight:700; letter-spacing:0.1em; color:#38bdf8; text-transform:uppercase;">Architecture Consultation & Operations</div>' +
+            '<h2 style="font-size:22px; font-weight:700; margin:4px 0 0 0; color:#fff;">About XORAS Systems & Direct Contact</h2>' +
+          '</div>' +
+          '<button id="modal-close-btn" style="background:transparent; border:none; color:#94a3b8; font-size:24px; cursor:pointer; padding:4px 8px;">&times;</button>' +
+        '</div>' +
+        '<div style="padding:28px; line-height:1.7; color:#cbd5e1; font-size:14px;">' +
+          '<h3 style="color:#fff; font-size:18px; margin:0 0 8px 0;">Who We Are</h3>' +
+          '<p style="margin:0 0 16px 0;">' +
+            'XORAS Systems designs and validates high-reliability, multi-agent artificial intelligence architectures. We specialize in eliminating context drift, stopping uncoordinated state collisions, and replacing subjective probabilistic evals with deterministic, compiler-checked proofs.' +
+          '</p>' +
+          '<h3 style="color:#fff; font-size:18px; margin:20px 0 8px 0;">Our Engineering Stance</h3>' +
+          '<p style="margin:0 0 16px 0;">' +
+            'We operate local-first on physical Apple Silicon M4 unified memory with zero unnecessary third-party cloud leakage. Every claim an agent makes must trace to an empirical receipt. We reject AI theater, self-grading loops, and unverifiable benchmarks.' +
+          '</p>' +
+          '<h3 style="color:#fff; font-size:18px; margin:20px 0 8px 0;">Direct Contact & Custom Architecture Inquiries</h3>' +
+          '<div style="background:#07090c; border:1px solid #1e293b; border-radius:8px; padding:18px; margin:14px 0;">' +
+            '<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">' +
+              '<span style="font-weight:600; color:#fff;">Primary Architectural Inquiries:</span>' +
+              '<a href="mailto:xoras.systems@gmail.com" style="color:#38bdf8; font-family:\'JetBrains Mono\', monospace; text-decoration:none;">xoras.systems@gmail.com</a>' +
+            '</div>' +
+            '<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">' +
+              '<span style="font-weight:600; color:#fff;">Lead Architect:</span>' +
+              '<span style="color:#cbd5e1;">Anthony Oxendine</span>' +
+            '</div>' +
+            '<div style="display:flex; justify-content:space-between; align-items:center;">' +
+              '<span style="font-weight:600; color:#fff;">Open Research & Provenance:</span>' +
+              '<a href="https://github.com/aoxendine3/xoras.infotech" target="_blank" rel="noreferrer" style="color:#38bdf8; font-family:\'JetBrains Mono\', monospace; text-decoration:none;">github.com/aoxendine3/xoras.infotech</a>' +
+            '</div>' +
+          '</div>' +
+          '<h3 style="color:#fff; font-size:18px; margin:20px 0 8px 0;">Consultation Areas</h3>' +
+          '<ul style="padding-left:20px; margin:0 0 16px 0; line-height:1.8;">' +
+            '<li>Zero-leakage local-first LLM orchestration (Apple Silicon unified memory + bare-metal inference).</li>' +
+            '<li>Monotonic Trajectory Pre-Order (MTPO) concurrency & state-locking protocols.</li>' +
+            '<li>Independent verification gates (Red, Blue, and Purple team audits) with programmatic test suites.</li>' +
+            '<li>Cryptographic state receipt architecture and immutable archival pipelines.</li>' +
+          '</ul>' +
+          '<div style="border-top:1px solid #1e293b; padding-top:16px; margin-top:20px; font-size:12px; color:#64748b;">' +
+            'All inquiries receive a response directly from engineering leadership within 24 business hours. No marketing funnels, zero spam.' +
+          '</div>' +
+        '</div>' +
+      '</div>';
+    document.body.appendChild(overlay);
+    setupModalEvents(overlay);
+  }
+
   function setupModalEvents(overlay) {
     document.getElementById("modal-close-btn")?.addEventListener("click", closeActiveModal);
     overlay.addEventListener("click", (e) => {
@@ -572,131 +648,54 @@
     });
   }
 
+
+  // Google OAuth Configuration Modal
+  function renderOAuthNoticeModal() {
+    closeActiveModal();
+    const overlay = document.createElement("div");
+    overlay.className = "xoras-modal-overlay";
+    overlay.id = "xoras-active-modal";
+    overlay.innerHTML = 
+      '<div class="xoras-modal-content" style="max-width:650px;">' +
+        '<div class="xoras-modal-header">' +
+          '<div>' +
+            '<div style="font-size:11px; font-weight:700; letter-spacing:0.1em; color:#f59e0b; text-transform:uppercase;">Authentication Setup</div>' +
+            '<h2 style="font-size:20px; font-weight:700; margin:4px 0 0 0; color:#fff;">Google Authentication Setup</h2>' +
+          '</div>' +
+          '<button id="modal-close-btn" style="background:transparent; border:none; color:#94a3b8; font-size:24px; cursor:pointer; padding:4px 8px;">&times;</button>' +
+        '</div>' +
+        '<div style="padding:24px; line-height:1.6; color:#cbd5e1; font-size:14px;">' +
+          '<div style="background:#1e293b; border-left:4px solid #f59e0b; padding:12px 16px; border-radius:4px; margin-bottom:16px;">' +
+            '<strong style="color:#fff;">Provider Configuration Notice:</strong>' +
+            '<p style="margin:4px 0 0 0; color:#94a3b8; font-size:13px;">The Google OAuth client secret has not yet been registered in the backend Supabase dashboard. To sign in immediately, please use the email and password fields below.</p>' +
+          '</div>' +
+          '<h4 style="color:#fff; margin:16px 0 8px 0;">To Enable 1-Click Google Sign-In:</h4>' +
+          '<ol style="padding-left:20px; margin:0 0 16px 0; font-size:13px; color:#94a3b8; line-height:1.7;">' +
+            '<li>Create OAuth Credentials in Google Cloud Console (<a href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noreferrer" style="color:#38bdf8;">console.cloud.google.com</a>).</li>' +
+            '<li>Add Authorized Redirect URI: <code style="background:#07090c; padding:2px 6px; border-radius:4px; color:#38bdf8;">https://voqfxzidzozehpjhcspl.supabase.co/auth/v1/callback</code>.</li>' +
+            '<li>Paste the Client ID and Secret into Supabase -&gt; Authentication -&gt; Providers -&gt; Google.</li>' +
+          '</ol>' +
+          '<button id="modal-ack-btn" class="xoras-nav-btn active" style="width:100%; justify-content:center; padding:10px; font-weight:600;">Use Email / Password Instead</button>' +
+        '</div>' +
+      '</div>';
+    document.body.appendChild(overlay);
+    setupModalEvents(overlay);
+    document.getElementById("modal-ack-btn")?.addEventListener("click", closeActiveModal);
+  }
+
   function closeActiveModal() {
     const existing = document.getElementById("xoras-active-modal");
     if (existing) existing.remove();
   }
 
   // Periodic injection check until DOM elements are fully hydrated
-
-  function injectDirectSection() {
-    if (document.getElementById("xoras-inline-section")) return;
-    const mainContainer = document.querySelector("main") || document.body;
-    const section = document.createElement("section");
-    section.id = "xoras-inline-section";
-    section.style.cssText = "max-width: 1200px; margin: 40px auto; padding: 0 20px; color: #fff;";
-    
-    let agentsHtml = AGENTS.map(function(agent) {
-      return '<div class="xoras-agent-card" style="background:#0d1117; border:1px solid #21262d;">' +
-        '<div>' +
-          '<div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px;">' +
-            '<div>' +
-              '<h3 style="font-size:18px; font-weight:700; margin:0; color:#fff;">' + agent.name + '</h3>' +
-              '<div style="font-size:12px; color:#94a3b8; font-family:\'JetBrains Mono\', monospace; margin-top:2px;">' + agent.seat + ' &bull; ' + agent.voice.split('/')[0].trim() + '</div>' +
-            '</div>' +
-            '<span style="background:' + agent.badgeColor + '22; border:1px solid ' + agent.badgeColor + '; color:' + agent.badgeColor + '; font-size:10px; font-weight:700; padding:2px 8px; border-radius:12px; letter-spacing:0.05em;">ACTIVE</span>' +
-          '</div>' +
-          '<div style="font-size:13px; font-weight:600; color:#cbd5e1; margin-bottom:8px;">' + agent.role + '</div>' +
-          '<div style="font-size:12px; color:#94a3b8; line-height:1.5; margin-bottom:12px;">' + agent.purpose + '</div>' +
-        '</div>' +
-        '<button class="xoras-nav-btn inline-dispatch-agent-btn" data-agent-id="' + agent.id + '" style="width:100%; justify-content:center; background:#161b22; border-color:#30363d; padding:8px; font-weight:600;">' +
-          'Consult ' + agent.name +
-        '</button>' +
-      '</div>';
-    }).join("");
-
-    let wikiHtml = WIKI_ARTICLES.map(function(art) {
-      return '<div class="xoras-wiki-card inline-wiki-card" data-article-id="' + art.id + '" style="background:#0d1117; border:1px solid #21262d;">' +
-        '<img src="' + art.image + '" alt="' + art.title + '" loading="lazy" />' +
-        '<div style="padding: 16px; flex: 1; display:flex; flex-direction:column; justify-content:space-between;">' +
-          '<div>' +
-            '<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">' +
-              '<span style="font-size:11px; font-weight:600; color:#f59e0b; text-transform:uppercase;">' + art.category + '</span>' +
-              '<span style="font-size:11px; color:#64748b;">' + art.readTime + '</span>' +
-            '</div>' +
-            '<h3 style="font-size:17px; font-weight:700; color:#fff; margin:0 0 8px 0;">' + art.title + '</h3>' +
-            '<p style="font-size:13px; color:#94a3b8; line-height:1.5; margin:0 0 16px 0;">' + art.summary + '</p>' +
-          '</div>' +
-          '<div style="color:#38bdf8; font-size:13px; font-weight:600; display:flex; align-items:center; gap:4px;">' +
-            'Read Receipt Specification &rarr;' +
-          '</div>' +
-        '</div>' +
-      '</div>';
-    }).join("");
-
-    section.innerHTML = 
-      '<div style="border-top: 1px solid #1e293b; padding-top: 48px; margin-bottom: 32px;">' +
-        '<div style="display:flex; justify-content:space-between; align-items:flex-end; flex-wrap:wrap; gap:16px;">' +
-          '<div>' +
-            '<div style="font-size:12px; font-weight:700; letter-spacing:0.1em; color:#10b981; text-transform:uppercase; margin-bottom:4px;">Autonomous Mesh</div>' +
-            '<h2 style="font-size:32px; font-weight:700; margin:0; letter-spacing:-0.02em;">Sovereign Citizen Agents</h2>' +
-            '<p style="color:#94a3b8; font-size:15px; margin:8px 0 0 0; max-width:600px;">' +
-              'Live interactive interfaces with Anthony\'s Citizen Agents. Grounded in empirical bare-metal execution, zero third-party leakage, and monotonic consensus.' +
-            '</p>' +
-          '</div>' +
-          '<button class="xoras-nav-btn" id="inline-btn-open-wiki" style="background:#f59e0b22; border-color:#f59e0b; color:#f59e0b; font-weight:600; padding:10px 18px;">' +
-            'Open Receipts & Architecture Wiki &rarr;' +
-          '</button>' +
-        '</div>' +
-      '</div>' +
-      '<div class="xoras-card-grid" style="padding:0; margin-bottom:40px;">' +
-        agentsHtml +
-      '</div>' +
-      '<div style="border-top: 1px solid #1e293b; padding-top: 48px; margin-bottom: 24px;">' +
-        '<div style="font-size:12px; font-weight:700; letter-spacing:0.1em; color:#f59e0b; text-transform:uppercase; margin-bottom:4px;">Technical Documentation & Proofs</div>' +
-        '<h2 style="font-size:32px; font-weight:700; margin:0; letter-spacing:-0.02em;">Architecture Receipts & Specs</h2>' +
-      '</div>' +
-      '<div class="xoras-card-grid" style="padding:0; margin-bottom:60px;">' +
-        wikiHtml +
-      '</div>';
-
-    mainContainer.appendChild(section);
-
-    document.getElementById("inline-btn-open-wiki")?.addEventListener("click", () => renderWikiModal());
-    document.querySelectorAll(".inline-dispatch-agent-btn").forEach(btn => {
-      btn.addEventListener("click", () => {
-        renderAgentsModal();
-        const id = btn.getAttribute("data-agent-id");
-        setTimeout(() => {
-          document.querySelector('.dispatch-agent-btn[data-agent-id="' + id + '"]')?.click();
-        }, 100);
-      });
-    });
-    document.querySelectorAll(".inline-wiki-card").forEach(c => {
-      c.addEventListener("click", () => {
-        const id = c.getAttribute("data-article-id");
-        renderWikiModal(id);
-      });
-    });
-  }
-
-  function injectFloatingDock() {
-    if (document.getElementById("xoras-injected-nav")) return;
-    const nav = document.createElement("div");
-    nav.id = "xoras-injected-nav";
-    nav.style.cssText = "position:fixed; bottom:24px; right:24px; z-index:9999; display:flex; gap:12px; background:rgba(13,15,18,0.92); border:1px solid #334155; padding:8px 14px; border-radius:30px; box-shadow:0 10px 25px -5px rgba(0,0,0,0.6); backdrop-filter:blur(8px);";
-    nav.innerHTML = 
-      '<button class="xoras-nav-btn active" id="btn-open-agents" style="border-radius:20px; padding:8px 16px;">' +
-        '<span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:#10b981;"></span>' +
-        'Citizen Agents (' + AGENTS.length + ')' +
-      '</button>' +
-      '<button class="xoras-nav-btn" id="btn-open-wiki" style="border-radius:20px; padding:8px 16px;">' +
-        '<span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:#f59e0b;"></span>' +
-        'Receipts & Wiki (' + WIKI_ARTICLES.length + ')' +
-      '</button>';
-    document.body.appendChild(nav);
-    document.getElementById("btn-open-agents")?.addEventListener("click", () => renderAgentsModal());
-    document.getElementById("btn-open-wiki")?.addEventListener("click", () => renderWikiModal());
-  }
-
   let attempts = 0;
   const timer = setInterval(() => {
     attempts++;
-    injectFloatingDock();
-    injectDirectSection();
-    if (document.getElementById("xoras-injected-nav") && document.getElementById("xoras-inline-section") || attempts > 30) {
+    injectNavigation();
+    if (document.getElementById("xoras-injected-nav") || attempts > 20) {
       clearInterval(timer);
     }
-  }, 250);
+  }, 300);
 
 })();
