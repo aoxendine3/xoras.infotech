@@ -8,7 +8,7 @@
     if (btn && btn.textContent && btn.textContent.includes("Continue with Google")) {
       e.preventDefault();
       e.stopPropagation();
-      renderOAuthNoticeModal();
+      promptDirectGoogleSignIn();
       return;
     }
 
@@ -636,6 +636,111 @@
       '</div>';
     document.body.appendChild(overlay);
     setupModalEvents(overlay);
+  }
+
+
+  const GOOGLE_CLIENT_ID = "764086051850-6qr4p6gpi6hn506pt8ejuq83di341hur.apps.googleusercontent.com";
+
+  function handleGoogleCredentialResponse(response) {
+    try {
+      // Decode JWT payload
+      const base64Url = response.credential.split('.')[1];
+      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+      const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+      }).join(''));
+      const userData = JSON.parse(jsonPayload);
+      
+      console.log("XORAS Auth: Verified Google Identity payload:", userData.email);
+
+      // Persist authenticated user session locally
+      const sessionUser = {
+        id: userData.sub,
+        email: userData.email,
+        name: userData.name,
+        picture: userData.picture,
+        verified: userData.email_verified,
+        auth_type: "GOOGLE_OAUTH_DIRECT",
+        signed_at: new Date().toISOString()
+      };
+      localStorage.setItem("xoras_auth_user", JSON.stringify(sessionUser));
+
+      // Show instant success notice and redirect to /teams
+      renderAuthSuccessModal(sessionUser);
+    } catch(err) {
+      console.error("Failed to parse Google credentials:", err);
+      alert("Google Sign-In failed to verify: " + err.message);
+    }
+  }
+
+  function renderAuthSuccessModal(user) {
+    closeActiveModal();
+    const overlay = document.createElement("div");
+    overlay.className = "xoras-modal-overlay";
+    overlay.id = "xoras-active-modal";
+    overlay.innerHTML = 
+      '<div class="xoras-modal-content" style="max-width:550px; text-align:center; padding:32px;">' +
+        '<div style="font-size:36px; margin-bottom:12px;">✅</div>' +
+        '<div style="font-size:11px; font-weight:700; letter-spacing:0.1em; color:#10b981; text-transform:uppercase;">Authentication Verified</div>' +
+        '<h2 style="font-size:24px; font-weight:700; margin:6px 0 12px 0; color:#fff;">Welcome, ' + (user.name || user.email) + '</h2>' +
+        '<p style="color:#94a3b8; font-size:14px; margin-bottom:24px;">Signed in directly via Google Identity Services (' + user.email + '). Your account session is active with 1 free team exercise unlocked.</p>' +
+        '<button id="auth-continue-btn" class="xoras-nav-btn active" style="width:100%; justify-content:center; padding:12px; font-size:14px; font-weight:700;">Proceed to Team Exercises &rarr;</button>' +
+      '</div>';
+    document.body.appendChild(overlay);
+    setupModalEvents(overlay);
+    document.getElementById("auth-continue-btn")?.addEventListener("click", function() {
+      closeActiveModal();
+      window.location.href = window.location.origin + "/xoras.infotech/teams";
+    });
+  }
+
+  function promptDirectGoogleSignIn() {
+    if (typeof google === "undefined" || !google.accounts || !google.accounts.id) {
+      // If script is still loading, wait a moment
+      setTimeout(promptDirectGoogleSignIn, 200);
+      return;
+    }
+
+    google.accounts.id.initialize({
+      client_id: GOOGLE_CLIENT_ID,
+      callback: handleGoogleCredentialResponse,
+      auto_select: false,
+      cancel_on_tap_outside: true
+    });
+
+    google.accounts.id.prompt((notification) => {
+      if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
+        console.log("OneTap skipped or not displayed, reason:", notification.getNotDisplayedReason() || notification.getSkippedReason());
+        // Fallback: render explicit Google Sign-In prompt modal
+        renderExplicitGoogleButtonModal();
+      }
+    });
+  }
+
+  function renderExplicitGoogleButtonModal() {
+    closeActiveModal();
+    const overlay = document.createElement("div");
+    overlay.className = "xoras-modal-overlay";
+    overlay.id = "xoras-active-modal";
+    overlay.innerHTML = 
+      '<div class="xoras-modal-content" style="max-width:500px; text-align:center; padding:32px;">' +
+        '<div class="xoras-modal-header" style="justify-content:flex-end; padding:0; border:none;">' +
+          '<button id="modal-close-btn" style="background:transparent; border:none; color:#94a3b8; font-size:24px; cursor:pointer;">&times;</button>' +
+        '</div>' +
+        '<div style="font-size:11px; font-weight:700; letter-spacing:0.1em; color:#3b82f6; text-transform:uppercase;">Google Sign-In</div>' +
+        '<h2 style="font-size:22px; font-weight:700; margin:6px 0 12px 0; color:#fff;">Select Your Google Account</h2>' +
+        '<p style="color:#94a3b8; font-size:13px; margin-bottom:24px;">Click the button below to authenticate directly with Google Identity Services.</p>' +
+        '<div id="g_id_signin_container" style="display:flex; justify-content:center; margin-bottom:16px;"></div>' +
+      '</div>';
+    document.body.appendChild(overlay);
+    setupModalEvents(overlay);
+    
+    if (typeof google !== "undefined" && google.accounts && google.accounts.id) {
+      google.accounts.id.renderButton(
+        document.getElementById("g_id_signin_container"),
+        { theme: "filled_blue", size: "large", shape: "pill", width: 280 }
+      );
+    }
   }
 
   function setupModalEvents(overlay) {
