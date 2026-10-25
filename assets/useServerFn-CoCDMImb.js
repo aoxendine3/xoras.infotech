@@ -1,0 +1,1 @@
+import{F as e,M as t,r as n}from"./link-BISiIQpW.js";import{o as r}from"./createServerFn-D0VUnfAh.js";var i=e(t(),1);function a(e){let t=n();return i.useCallback(async(...n)=>{try{let t=await e(...n);if(r(t))throw t;return t}catch(e){if(r(e))return e.options._fromLocation=t.stores.location.get(),t.navigate(t.resolveRedirect(e).options);throw e}},[t,e])}export{a as t};

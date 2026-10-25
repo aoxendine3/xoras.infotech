@@ -1,0 +1,11 @@
+# Logs & Runtimes
+*.log
+.DS_Store
+node_modules/
+dist/
+
+# Local Environment & Secrets
+.env
+.env.local
+*.pem
+*.key
