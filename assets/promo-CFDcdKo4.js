@@ -1,0 +1,1 @@
+import{n as e,t}from"./createServerFn-D0VUnfAh.js";var n=t({method:`GET`}).handler(e(`12689e9da70f7fbb8b35029dbb9f9be928da72a08b4752dc6b5d3f4d9a8535e9`)),r=`FOUNDING50`;function i(e,t,n,i){let a=new URLSearchParams({client_reference_id:t});return n&&a.set(`prefilled_email`,n),i>0&&a.set(`prefilled_promo_code`,r),`${e}?${a.toString()}`}export{i as n,n as r,r as t};
