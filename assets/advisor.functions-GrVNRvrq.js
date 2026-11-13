@@ -105,24 +105,51 @@ export var t = () => async function({ data }) {
     return { ok: false, error: "Please enter a description of your multi-agent failure mode or select a sample." };
   }
 
+  // Real-time conductor path: when a worker URL is supplied (data.workerUrl),
+  // the deterministic advisor dispatches to the Cloud DAXX reasoning engine
+  // through the hardened edge gateway. Without one, it returns the verified
+  // deterministic receipt locally — never a fabricated answer.
+  let workerResult = null;
+  const workerUrl = typeof data?.workerUrl === "string" ? data.workerUrl.trim() : "";
+  if (workerUrl) {
+    try {
+      const resp = await fetch(workerUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ problem: challenge }),
+      });
+      const payload = await resp.json().catch(() => null);
+      if (resp.ok && payload && payload.ok !== false) {
+        workerResult = payload;
+      }
+    } catch (e) {
+      workerResult = null;
+    }
+  }
+
   const matched = resolveDiagnostic(challenge);
   const receiptHash = Array.from(matched.id + Date.now().toString())
     .reduce((acc, char) => (acc * 31 + char.charCodeAt(0)) >>> 0, 0)
     .toString(16).padStart(8, "0");
 
+  const advice = workerResult && workerResult.advice
+    ? workerResult.advice
+    : {
+        id: "sov-" + matched.id + "-" + receiptHash,
+        title: matched.title,
+        videoId: matched.videoId,
+        why: matched.why,
+        rootCause: matched.rootCause,
+        nextStep: matched.nextStep,
+        implementationSnippet: matched.implementationSnippet,
+        verificationProtocol: matched.verificationProtocol,
+        statusBadge: matched.statusBadge
+      };
+
   return {
     ok: true,
-    advice: {
-      id: "sov-" + matched.id + "-" + receiptHash,
-      title: matched.title,
-      videoId: matched.videoId,
-      why: matched.why,
-      rootCause: matched.rootCause,
-      nextStep: matched.nextStep,
-      implementationSnippet: matched.implementationSnippet,
-      verificationProtocol: matched.verificationProtocol,
-      statusBadge: matched.statusBadge
-    }
+    source: (workerResult && workerResult.source) || "deterministic-local",
+    advice
   };
 };
 
