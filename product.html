@@ -96,9 +96,9 @@
 
     <div class="stats">
       <div class="stat"><b>100%</b><small>Dual-substrate verification match</small></div>
-      <div class="stat"><b>0</b><small>Self-grading exits — every action notarized</small></div>
-      <div class="stat"><b>140k+</b><small>Cycles proven in reference audit</small></div>
-      <div class="stat"><b>WORM</b><small>Immutable Merkle DAG, no overwriting</small></div>
+      <div class="stat"><b>6/6</b><small>Production gates — replayable on your hardware</small></div>
+      <div class="stat"><b>Z3</b><small>Committed proofs discharge UNSAT</small></div>
+      <div class="stat"><b>WORM</b><small>Append-only chain — editing history breaks verification</small></div>
     </div>
   </section>
 
@@ -127,7 +127,7 @@
       </div>
       <div class="layer">
         <h4>2 · Notary</h4>
-        <p>A sealed, Ed25519-signed receipt is issued for every witnessed action — stored in a WORM SQLite blackboard with attribution, Merkle root, and timestamp.</p>
+        <p>A signed receipt is issued for every witnessed action and appended to a WORM chain. Each receipt commits to the hash of the previous one — retroactive edits break verification of every later link. (v0.1 uses HMAC-SHA256; public-key attestation is the v1 roadmap.)</p>
       </div>
       <div class="layer">
         <h4>3 · Recover</h4>
@@ -152,26 +152,26 @@
       <tbody>
         <tr>
           <td>100% dual-substrate agreement</td>
-          <td>Zig native verifier and Python guard agree 100% on Merkle root and lineage monotonicity (3,262 nodes). No drift between the two independent implementations.</td>
+          <td>Zig native verifier and the independent Python guard recompute the same bytes and agree, or refuse — no trust in the agent required. Reproduce: <code>bash ops/scripts/verify_all_production_gates.sh</code></td>
         </tr>
         <tr>
           <td>6/6 production gates discharged</td>
-          <td>Full test suite passes: E2E, telemetry chain verification, 6 production gates, 174 pytest tests, 100% pass.</td>
+          <td>Full suite passes: E2E Python gate, C/Z3 formal checks, Zig Merkle verifier, TypeScript red-team harness, 14-gate falsification audit, Rust crate tests. Exits non-zero on any failure.</td>
         </tr>
         <tr>
-          <td>WORM Merkle blackboard</td>
-          <td>Immutable log of every verified action. 20,927 knowledge objects with attribution and Merkle timestamps. Verify anytime, offline, without trusting the agent.</td>
+          <td>WORM receipt chain</td>
+          <td>Append-only log of notarized actions. <span class="mono">xoras-notary verify-chain</span> re-checks every link offline with the notary key — any tamper is detected and named by link index.</td>
         </tr>
         <tr>
-          <td>Viz</td>
-          <td>Autonomous agent ran 3293 nodes of monotonic proof of work without state drift — zero backdating, zero replay. Every node verified by two independent codebases.</td>
+          <td>Candidate sandboxing</td>
+          <td>Candidate code executes inside OS-enforced sandboxes (sandbox-exec on macOS, bubblewrap on Linux) — network denied, writes to protected paths denied. Not a bare subprocess.</td>
         </tr>
       </tbody>
     </table>
 
     <div class="box">
       <div class="box-title">Run it yourself</div>
-      <p>One command — no registration, no cloud, no API key. Clone the repo, run the test suite, and watch the two independent implementations prove agreement on real data — or watch them refuse to agree, and see why.</p>
+      <p>Two doors. (1) Download the 3.2 KB stdlib-only CLI and notarize your first action in one minute — <a href="./download/xoras-notary-v0.1.0.tar.gz" style="color:#5ee7ff">xoras-notary-v0.1.0.tar.gz</a> (verify: <code>shasum -a 256</code> → <code>6983907d9fd5adbaf6a497694adc7a3467cab8e8dd33672990ef0a9e9b3cc888</code>). (2) Clone the repo and re-run the full gate suite against real data.</p>
     </div>
   </section>
 
@@ -194,7 +194,7 @@
       </div>
       <div class="layer">
         <h4>Compliance &amp; legal</h4>
-        <p>WORM-attested evidence chain for every agent action. EU AI Act Article 12 compliance is not a checkbox — it's the file itself.</p>
+        <p>WORM-attested evidence chain for every agent action. Built to leave the exact artifact your auditor asks for — the receipt file itself, verifiable offline.</p>
       </div>
     </div>
   </section>
@@ -205,20 +205,21 @@
     <h2>Preview requires nothing. Production requires one email.</h2>
 
     <div class="cta-buttons no-print">
-      <a href="https://buy.stripe.com/fZu28r18Ggc03jp29cdIA01" class="btn btn-primary">Get Agent Notary</a>
+      <a href="./download/xoras-notary-v0.1.0.tar.gz" class="btn btn-primary">Download the CLI — v0.1.0</a>
+      <a href="https://buy.stripe.com/fZu28r18Ggc03jp29cdIA01" class="btn btn-secondary">Get Agent Notary — $49/mo</a>
       <a href="https://github.com/aoxendine3/enterprise-context-blueprint" class="btn btn-secondary">View the evidence</a>
     </div>
 
     <div class="box no-print" style="margin-top:2rem;">
       <div class="box-title">Agent Notary — early access</div>
       <p>If you ship agents in regulated environments — if your auditors, your legal team, or your board asks "what did the agent actually do," and you have to answer with something more than a log line — this is the tool.</p>
-      <p style="margin-top:1rem;"><a href="https://apps.apple.com/app/agent-notary" style="color:#5ee7ff">Agent Notary — coming soon</a> · <a href="mailto:hello@xoras.info" style="color:#5ee7ff">hello@xoras.info</a></p>
+      <p style="margin-top:1rem;"><a href="mailto:hello@xoras.info" style="color:#5ee7ff">hello@xoras.info</a> · <a href="./security.html" style="color:#5ee7ff">Security model &amp; honest scope</a></p>
     </div>
   </section>
 
   <!-- Footer -->
   <footer class="no-print">
-    <p>© 2026 XORAS Systems · Agent Notary · <a href="/product" style="color:inherit">/product</a> · <a href="/whitepaper" style="color:inherit">/whitepaper</a> · <a href="/security" style="color:inherit">/security</a></p>
+    <p>© 2026 XORAS Systems · Agent Notary · <a href="./product.html" style="color:inherit">Product</a> · <a href="./security.html" style="color:inherit">Security</a> · <a href="./download/xoras-notary-v0.1.0.tar.gz" style="color:inherit">Download</a> · <a href="https://github.com/aoxendine3/enterprise-context-blueprint" style="color:inherit">Source</a></p>
   </footer>
 </main>
 </body>
