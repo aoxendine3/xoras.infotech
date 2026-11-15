@@ -95,7 +95,7 @@
     <p class="sub">Every agent claim, attested. Every action sealed. Every outcome verified against two independent implementations before it is declared done — or refused if it cannot be. This is what an agent looks like when its work can be audited.</p>
 
     <div class="stats">
-      <div class="stat"><b>100%</b><small>Dual-substrate verification match</small></div>
+      <div class="stat"><b>100%</b><small>Dual-substrate check agrees on this host (today)</small></div>
       <div class="stat"><b>6/6</b><small>Production gates — replayable on your hardware</small></div>
       <div class="stat"><b>Z3</b><small>Committed proofs discharge UNSAT</small></div>
       <div class="stat"><b>WORM</b><small>Append-only chain — editing history breaks verification</small></div>
@@ -151,7 +151,7 @@
       </thead>
       <tbody>
         <tr>
-          <td>100% dual-substrate agreement</td>
+          <td>Dual-substrate check agrees (grid sample; stats published)</td>
           <td>Zig native verifier and the independent Python guard recompute the same bytes and agree, or refuse — no trust in the agent required. Reproduce: <code>bash ops/scripts/verify_all_production_gates.sh</code></td>
         </tr>
         <tr>
