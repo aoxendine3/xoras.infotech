@@ -4,9 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Agent Notary by XORAS — Cryptographic Proof for AI Agents</title>
-<meta name="description" content="What Agent Notary does: witnesses, verifies, notarizes every agent action. WORM-attested Merkle DAG receipts. Dual-substrate independent verification. Identity sealed, unbreakable at runtime.">
+<meta name="description" content="Agent Notary by XORAS — a 3.2 KB, stdlib-only Python CLI. Tamper-evident HMAC-SHA256 receipts, WORM chained ordering, offline verification. Pay with confidence; verify without trusting us.">
 <meta property="og:title" content="Agent Notary by XORAS">
-<meta property="og:description" content="Cryptographic proof for AI agents. Every action notarized. Every claim verified. Immutable Merkle DAG.">
+<meta property="og:description" content="Tamper-evident receipts for AI agent actions. A 3.2 KB stdlib-only Python CLI. The receipt and your host prove it — nothing else is trusted yet.">
 <meta property="og:type" content="website">
 <style>
   @page {
@@ -92,10 +92,10 @@
   <section class="masthead">
     <p class="kicker">Cryptographic proof of agent action</p>
     <h1>Your agents say it worked.<br><span class="accent">Agent Notary proves it.</span></h1>
-    <p class="sub">Every agent claim, attested. Every action sealed. Every outcome verified against two independent implementations before it is declared done — or refused if it cannot be. This is what an agent looks like when its work can be audited.</p>
+    <p class="sub">Every agent action lands in a WORM-chained, HMAC-SHA256-signed receipt you can verify offline. Your key is the witness; your host verifies; nobody attests on your behalf.</p>
 
     <div class="stats">
-      <div class="stat"><b>100%</b><small>Dual-substrate check agrees on this host (today)</small></div>
+      <div class="stat"><b>3.2 KB</b><small>One Python file, stdlib only, no network</small></div>
       <div class="stat"><b>6/6</b><small>Production gates — replayable on your hardware</small></div>
       <div class="stat"><b>Z3</b><small>Committed proofs discharge UNSAT</small></div>
       <div class="stat"><b>WORM</b><small>Append-only chain — editing history breaks verification</small></div>
@@ -110,7 +110,7 @@
 
     <div class="box no-print">
       <div class="box-title">What Agent Notary changes</div>
-      <p>The agent does not grade itself. A separate, independent implementation recomputes the artifact and agrees or refuses. The receipt is stored in an immutable Merkle DAG. If the two implementations disagree, the artifact does not advance — by design, not by exception.</p>
+      <p>The receipt holds exactly what the CLI puts in it: timestamp, payload fingerprint, previous receipt hash, and an HMAC-SHA256 signature over the whole thing. Re-check it anytime with the same key — nothing about the CLI requires us to sign off on it.</p>
     </div>
   </section>
 
@@ -122,8 +122,8 @@
 
     <div class="layers no-print">
       <div class="layer">
-        <h4>1 · Witness</h4>
-        <p>Every agent action passes an independent implementation (Zig) that recomputes the artifact. Two codebases must agree before anything advances.</p>
+        <h4>1 · Witness (architecture)</h4>
+        <p>In the XORAS substrate, every agent claim is recomputed by two implementations before it is accepted (Zig + Python, both in <code>enterprise-context-blueprint</code>). The CLI download below carries the receipt format you can verify locally without cloning the repo.</p>
       </div>
       <div class="layer">
         <h4>2 · Notary</h4>
@@ -135,7 +135,7 @@
       </div>
       <div class="layer">
         <h4>4 · Prove</h4>
-        <p>Every artifact carries a dual-implementation proof that any third party can independently verify — no trust required, no proprietary black box.</p>
+        <p>End-to-end verifiability without us in the loop: sha256 of the download is published; the CLI verifies every chain link against your key; no phone-home, no telemetry, no third-party dependency.</p>
       </div>
     </div>
   </section>
@@ -151,7 +151,7 @@
       </thead>
       <tbody>
         <tr>
-          <td>Dual-substrate check agrees (grid sample; stats published)</td>
+          <td>tamper-evident WORM chain — editing history breaks verification of every later link; detect any tamper by link index</td>
           <td>Zig native verifier and the independent Python guard recompute the same bytes and agree, or refuse — no trust in the agent required. Reproduce: <code>bash ops/scripts/verify_all_production_gates.sh</code></td>
         </tr>
         <tr>
@@ -182,15 +182,15 @@
     <div class="layers">
       <div class="layer">
         <h4>Auditors</h4>
-        <p>Agent trails you can take to a regulator. Every action notarized with attribution, timestamp, and independent verification.</p>
+        <p>A receipt trail you can hand to opposing counsel: timestamp, payload fingerprint, chain linkage — all re-verifiable offline with the notary key.</p>
       </div>
       <div class="layer">
         <h4>Security teams</h4>
-        <p>Runtime attestation — two independent codebases must agree before anything advances. Self-grading is impossible by construction.</p>
+        <p>Payload integrity and chain integrity — the two properties this CLI actually proves. For runtime attestation of an agent's behavior as it happens, see the substrate gate receipts in the repo.</p>
       </div>
       <div class="layer">
         <h4>AI platform teams</h4>
-        <p>Drop-in verification for every agent action. No agent can claim "done" without proof. Refuses to advance if it cannot verify.</p>
+        <p>Plug the notary into your agent harness today: <code>xoras-notary issue --payload agent_output.json --chain chain.jsonl</code>. For runtime attestation as agent work happens, the substrate gate receipts (in the repo) track that path — not the CLI.</p>
       </div>
       <div class="layer">
         <h4>Compliance &amp; legal</h4>

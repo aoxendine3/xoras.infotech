@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Agent Notary by XORAS — Cryptographic Proof for AI Agents</title>
-<meta name="description" content="Tamper-evident, WORM-chained receipts for AI agent actions. Dual-substrate verification: two independent implementations agree — or the artifact does not advance.">
+<meta name="description" content="Tamper-evident receipts for AI agent actions — a 3.2 KB, stdlib-only Python CLI. HMAC-SHA256 signatures, chained WORM ordering, offline verification, no third-party dependencies.">
 <meta property="og:title" content="Agent Notary by XORAS">
 <meta property="og:description" content="Your agents say it worked. Agent Notary proves it — or refuses to advance.">
 <meta property="og:type" content="website">
@@ -49,7 +49,7 @@
   <section class="masthead">
     <p class="kicker">Cryptographic proof of agent action</p>
     <h1>Your agents say it worked.<br><span class="accent">Agent Notary proves it.</span></h1>
-    <p class="sub">Every agent action notarized. Every claim verified by two independent implementations before it is declared done — or refused if it cannot be.</p>
+    <p class="sub">Tamper-evident receipts for AI agent actions — HMAC-SHA256 signatures, WORM chained ordering, offline verification, stdlib-only.</p>
     <div class="cta">
       <a class="btn btn-primary" href="./download/xoras-notary-v0.1.0.tar.gz">Download the CLI</a>
       <a class="btn btn-ghost" href="./product.html">Read the product brief</a>
@@ -61,7 +61,7 @@
     <p class="label">How it works</p>
     <h2>Notarized actions, not intentions.</h2>
     <div class="grid">
-      <div class="card"><h3>1 · Witness</h3><p>Two independent implementations recompute the artifact. They agree — or nothing advances. Self-grading is impossible by construction.</p></div>
+      <div class="card"><h3>1 · Witness (architecture)</h3><p>The XORAS substrate re-executes agent work against two implementations. The v0.1.0 download ships the receipt chain only — verification primitives for your own harness.</p></div>
       <div class="card"><h3>2 · Notary</h3><p>A signed receipt is written to a WORM chain. Each receipt commits to the previous one — editing history breaks verification of everything after it.</p></div>
       <div class="card"><h3>3 · Prove</h3><p>Any third party can re-verify the chain offline with the same key. No cloud, no black box, no trust in the agent required.</p></div>
     </div>
@@ -72,8 +72,8 @@
     <h2>Claims you can replay on your own machine.</h2>
     <ul>
       <li>6/6 production gates — run them yourself: <code>bash ops/scripts/verify_all_production_gates.sh</code></li>
-      <li>Dual-substrate agreement — a native Zig verifier and a Python guard recompute the same bytes and agree, or refuse</li>
-      <li>Committed Z3 proofs discharge UNSAT (<code>mtpo_preorder_invariant</code>, <code>upgp_containment_proof</code>)</li>
+      <li>Every receipt is HMAC-SHA256 signed against your key; every receipt commits to the previous one — editing history breaks verification of everything after it</li>
+      <li><code>xoras-notary verify-chain</code> re-checks every link offline; any tamper is detected and named by link index</li>
       <li><code>xoras-notary</code> v0.1.0 — stdlib-only Python, offline, no telemetry. HMAC-SHA256 receipt chains</li>
     </ul>
     <div class="cta">
